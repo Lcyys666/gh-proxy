@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<style>
+    /* 全局样式 */
+    html, body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* 浅色主题 */
+    .light {
+        background-color: #ffffff;
+        color: #333333;
+    }
+
+    /* 深色主题 */
+    .dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+
+    body {
+        min-height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    p {
+        word-break: break-all;
+    }
+
+    /* 菜单栏样式 */
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f0f0f0;
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s;
+    }
+
+    .dark .navbar {
+        background-color: #2a2a2a;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar h1 {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .navbar .right {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .theme-toggle button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333333;
+    }
+
+    .dark .theme-toggle button {
+        color: #ffffff;
+    }
+
+    .github-blog a {
+        text-decoration: none;
+        color: #333333;
+    }
+
+    .dark .github-blog a {
+        color: #ffffff;
+    }
+
+    .announcement button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333333;
+    }
+
+    .dark .announcement button {
+        color: #ffffff;
+    }
+
+    /* 弹出界面样式 */
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1001;
+        width: 400px;
+        max-width: 90%;
+    }
+
+    .dark .popup {
+        background-color: #2a2a2a;
+        color: #ffffff;
+    }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    /* 关闭按钮样式 */
+    .close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #6c757d;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .dark .close-btn {
+        color: #ffffff;
+    }
+
+    .close-btn:hover {
+        color: #343a40;
+    }
+
+    .dark .close-btn:hover {
+        color: #f0f0f0;
+    }
+
+    /* 页面内容样式 */
+    .content {
+        margin-top: 80px;
+        text-align: center;
+    }
+
+    /* 表单样式 */
+    form {
+        display: inline-block;
+        text-align: left;
+    }
+
+    .input-container {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .url {
+        font-size: 18px;
+        padding: 10px;
+        width: 400px;
+        max-width: 100%;
+        border: 1px solid #bfbfbf;
+        border-radius: 4px;
+        background-color: #ffffff;
+        color: #333333;
+    }
+
+    .dark .url {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        border-color: #4a4a4a;
+    }
+
+    .url:focus {
+        outline: none;
+        border-color: #00bfb3;
+    }
+
+    .btn {
+        line-height: 40px;
+        background-color: #6c757d; /* 浅色主题按钮颜色 */
+        color: #fff;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 0 30px;
+        margin: 20px 0;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .dark .btn {
+        background-color: #ffffff; /* 深色主题按钮颜色 */
+        color: #1a1a1a;
+    }
+
+    .btn:hover {
+        background-color: #343a40; /* 浅色主题按钮悬停颜色 */
+    }
+
+    .dark .btn:hover {
+        background-color: #f0f0f0; /* 深色主题按钮悬停颜色 */
+    }
+
+    .tips, .example {
+        color: #7b7b7b; /* 浅色主题文字颜色 */
+    }
+
+    .dark .tips, .dark .example {
+        color: #ffffff; /* 深色主题文字颜色 */
+    }
+
+    .tips > p:first-child::before {
+        content: 'PS：';
+        color: #7b7b7b
+    }
+
+    .example > p:first-child::before {
+        content: '合法输入示例：';
+        color: #7b7b7b
+    }
+
+    /* 链接样式 */
+    a {
+        color: #6c757d; /* 浅色主题链接颜色 */
+        text-decoration: none;
+    }
+
+    .dark a {
+        color: #ffffff; /* 深色主题链接颜色 */
+    }
+
+    a:hover {
+        color: #343a40; /* 浅色主题链接悬停颜色 */
+        text-decoration: underline;
+    }
+
+    .dark a:hover {
+        color: #f0f0f0; /* 深色主题链接悬停颜色 */
+    }
+
+    /* 底部版权信息 */
+    .footer {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    /* 其他样式保持不变 */
+    .flex {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .block {
+        display: block;
+        position: relative;
+    }
+
+    .bar {
+        content: '';
+        height: 2px;
+        width: 100%;
+        bottom: 0;
+        position: absolute;
+        background: #00bfb3;
+        transition: 0.2s ease transform;
+        -moz-transition: 0.2s ease transform;
+        -webkit-transition: 0.2s ease transform;
+        transform: scaleX(0);
+    }
+
+    .url:focus ~ .bar {
+        transform: scaleX(1);
+    }
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <script>
+        // 根据系统主题设置初始主题
+        function setInitialTheme() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.add('light');
+            }
+        }
+
+        // 主题切换逻辑
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            document.documentElement.classList.toggle('light');
+        }
+
+        // 弹出界面逻辑
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // 表单提交逻辑
+        function toSubmit(e) {
+            e.preventDefault();
+            window.open(location.href.substr(0, location.href.lastIndexOf('/') + 1) + document.getElementsByName('q')[0].value);
+            return false;
+        }
+
+        // 初始化主题
+        setInitialTheme();
+    </script>
+    <title>GitHub 文件加速</title>
+</head>
+<body class="flex">
+    <!-- 菜单栏 -->
+    <nav class="navbar">
+        <h1>GitHub 文件加速</h1>
+        <div class="right">
+            <div class="theme-toggle">
+                <button onclick="toggleTheme()">主题切换</button>
+            </div>
+            <div class="github-blog">
+                <a href="https://lcyys666.github.io" target="_blank">GitHub 博客</a>
+            </div>
+            <div class="announcement">
+                <button onclick="showPopup()">本站最新地址发布站</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 弹出界面 -->
+    <div id="overlay" class="overlay"></div>
+    <div id="popup" class="popup">
+        <button class="close-btn" onclick="closePopup()">×</button>
+        <h2>本站最新地址发布站</h2>
+        <p>加速服务：<a href="https://proxy.ghproxy.xyz/" target="_blank">https://proxy.ghproxy.xyz/</a> 状态：可用</p>
+        <p>镜像站：<a href="https://mirror.ghproxy.xyz/" target="_blank">https://mirror.ghproxy.xyz/</a> 状态：不可用</p>
+    </div>
+
+    <!-- 页面内容 -->
+    <div class="content">
+        <h1>GitHub 文件加速</h1>
+        <form action="./" method="get" style="padding-bottom: 40px" target="_blank" onsubmit="toSubmit(event)">
+            <div class="input-container">
+                <input class="url" name="q" type="text" placeholder="键入Github文件链接"
+                       pattern="^((https|http):\/\/)?(github\.com\/.+?\/.+?\/(?:releases|archive|blob|raw|suites)|((?:raw|gist)\.(?:githubusercontent|github)\.com))\/.+$" required>
+            </div>
+            <input class="btn" type="submit" value="下载">
+            <div class="tips">
+                <p>PS：GitHub文件链接带不带协议头都可以，支持release、archive以及文件，右键复制出来的链接都是符合标准的，更多用法、clone加速请参考<a href="https://hunsh.net/archives/23/">这篇文章</a>。</p>
+                <p>release、archive使用cf加速，文件会跳转至JsDelivr</p>
+                <p>注意，不支持项目文件夹</p>
+            </div>
+            <div class="example">
+                <p>分支源码：<a href="https://github.com/hunshcn/project/archive/master.zip" target="_blank">https://github.com/hunshcn/project/archive/master.zip</a></p>
+                <p>release源码：<a href="https://github.com/hunshcn/project/archive/v0.1.0.tar.gz" target="_blank">https://github.com/hunshcn/project/archive/v0.1.0.tar.gz</a></p>
+                <p>release文件：<a href="https://github.com/hunshcn/project/releases/download/v0.1.0/example.zip" target="_blank">https://github.com/hunshcn/project/releases/download/v0.1.0/example.zip</a></p>
+                <p>分支文件：<a href="https://github.com/hunshcn/project/blob/master/filename" target="_blank">https://github.com/hunshcn/project/blob/master/filename</a></p>
+            </div>
+        </form>
+    </div>
+
+    <!-- 底部版权信息 -->
+    <div class="footer">
+        <p>项目基于gh-proxy，开源于GitHub <a href="https://github.com/hunshcn/gh-proxy">hunshcn/gh-proxy</a></p>
+    </div>
+</body>
+</html>
